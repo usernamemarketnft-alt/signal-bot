@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>تسجيل الدخول إلى X</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23000'/%3E%3Cpath fill='%23fff' transform='translate(3.6 3.6) scale(.7)' d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#000;
+  --backdrop:#242d34;
+  --text:#e7e9ea;
+  --muted:#71767b;
+  --border:#333639;
+  --blue:#1d9bf0;
+  --blue-hover:#1a8cd8;
+  --btn-light:#eff3f4;
+  --btn-light-hover:#d7dbdc;
+  --danger:#f4212e;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans Arabic","Tahoma",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--backdrop);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0);
+}
+button,input{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* ===== النافذة ===== */
+.modal{
+  width:600px;
+  max-width:100%;
+  min-height:400px;
+  max-height:90vh;
+  background:var(--bg);
+  border-radius:16px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden auto;
+}
+.modal-header{
+  height:53px;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding:0 16px;
+}
+.icon-btn{
+  width:34px;height:34px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  position:absolute;
+  inset-inline-start:12px;
+  top:9px;
+  transition:background .15s;
+}
+.icon-btn:hover{background:rgba(239,243,244,.1)}
+.icon-btn svg{width:20px;height:20px;fill:var(--text)}
+.logo{width:30px;height:30px;fill:var(--text)}
+
+.modal-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:0 80px 48px;
+}
+.col{width:100%;max-width:364px;margin:0 auto;display:flex;flex-direction:column;flex:1}
+h1{font-size:31px;line-height:36px;font-weight:800;margin:20px 0 28px;letter-spacing:-.2px}
+
+.step{display:none;flex-direction:column;flex:1}
+.step.active{display:flex}
+
+/* ===== أزرار ===== */
+.btn{
+  width:100%;
+  min-height:40px;
+  border-radius:9999px;
+  font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:0 16px;
+  transition:background .15s,opacity .15s;
+}
+.btn-social{background:#fff;color:#0f1419;font-weight:600;border:1px solid #dadce0;margin-bottom:12px;height:40px}
+.btn-social:hover{background:#f2f2f2}
+.btn-social svg{width:18px;height:18px;flex:none}
+.btn-light{background:var(--btn-light);color:#0f1419;height:40px;margin-top:24px}
+.btn-light:hover:not(:disabled){background:var(--btn-light-hover)}
+.btn-outline{border:1px solid #536471;color:var(--text);height:40px;margin-top:20px}
+.btn-outline:hover{background:rgba(239,243,244,.1)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--btn-light);color:#0f1419;height:52px;font-size:17px;margin-top:auto}
+.btn-primary:hover:not(:disabled){background:var(--btn-light-hover)}
+
+/* ===== فاصل "أو" ===== */
+.divider{display:flex;align-items:center;gap:4px;margin:4px 0 8px;color:var(--text)}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--border)}
+.divider span{padding:0 4px;font-size:15px}
+
+/* ===== الحقول ===== */
+.field{position:relative;margin:12px 0 0}
+.field input{
+  width:100%;
+  height:58px;
+  padding:26px 12px 8px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:4px;
+  outline:none;
+  font-size:17px;
+  transition:border-color .15s;
+}
+.field input.has-eye{padding-inline-end:48px}
+.field label{
+  position:absolute;
+  inset-inline-start:13px;
+  top:18px;
+  color:var(--muted);
+  font-size:17px;
+  pointer-events:none;
+  transition:all .12s ease;
+  transform-origin:top;
+}
+.field input:focus{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+.field input:focus + label{color:var(--blue)}
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label{top:8px;font-size:13px}
+.field input[readonly]{background:rgba(51,54,57,.35);color:var(--muted);box-shadow:none;border-color:var(--border);cursor:not-allowed}
+.field input[readonly] + label{color:var(--muted)}
+.field.invalid input{border-color:var(--danger);box-shadow:0 0 0 1px var(--danger)}
+.eye{
+  position:absolute;
+  inset-inline-end:8px;top:12px;
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.eye:hover{background:rgba(239,243,244,.1)}
+.eye svg{width:20px;height:20px;fill:var(--muted)}
+.error{color:var(--danger);font-size:13px;margin-top:8px;min-height:0}
+.error:empty{display:none}
+
+.foot-text{color:var(--muted);margin-top:40px;font-size:15px}
+.step2-sub{color:var(--muted);margin:-12px 0 20px;font-size:15px}
+.forgot-link{display:block;margin-top:12px;font-size:13px}
+
+/* ===== تبديل اللغة ===== */
+.lang{
+  position:fixed;
+  bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  inset-inline-end:16px;
+  color:var(--muted);
+  font-size:13px;
+  padding:6px 12px;
+  border-radius:9999px;
+  z-index:5;
+}
+.lang:hover{background:rgba(239,243,244,.1);color:var(--text)}
+
+/* ===== الجوال: شاشة كاملة ===== */
+@media (max-width:600px){
+  body{background:var(--bg);align-items:stretch}
+  .modal{border-radius:0;max-height:none;min-height:100%;width:100%}
+  .modal-body{padding:0 32px 32px}
+  h1{font-size:28px;margin:12px 0 24px}
+  .lang{background:rgba(0,0,0,.6)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<main class="modal" role="dialog" aria-modal="true" aria-labelledby="title1">
+  <div class="modal-header">
+    <button class="icon-btn" id="closeBtn" type="button" aria-label="إغلاق">
+      <svg viewBox="0 0 24 24" aria-hidden="true" id="closeIcon"><path d="M10.59 12 4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"/></svg>
+    </button>
+    <svg class="logo" viewBox="0 0 24 24" aria-label="X"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+  </div>
+
+  <div class="modal-body">
+    <div class="col">
+
+      <!-- الخطوة 1 -->
+      <form class="step active" id="step1" novalidate autocomplete="on">
+        <h1 id="title1" data-i18n="title1">تسجيل الدخول إلى X</h1>
+
+        <button type="button" class="btn btn-social" id="googleBtn">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <span data-i18n="google">تسجيل الدخول باستخدام Google</span>
+        </button>
+
+        <button type="button" class="btn btn-social" id="appleBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+          <span data-i18n="apple">تسجيل الدخول باستخدام Apple</span>
+        </button>
+
+        <div class="divider" role="separator"><span data-i18n="or">أو</span></div>
+
+        <div class="field" id="idField">
+          <input type="text" id="identifier" name="username" placeholder=" " autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" dir="auto">
+          <label for="identifier" data-i18n="idLabel">الهاتف أو البريد الإلكتروني أو اسم المستخدم</label>
+        </div>
+        <div class="error" id="idError" role="alert"></div>
+
+        <button type="submit" class="btn btn-light" id="nextBtn" disabled data-i18n="next">التالي</button>
+        <button type="button" class="btn btn-outline" id="forgotBtn" data-i18n="forgot">هل نسيت كلمة المرور؟</button>
+
+        <p class="foot-text">
+          <span data-i18n="noAccount">ليس لديك حساب؟</span>
+          <a href="#" id="signupLink" data-i18n="signup">اشترك</a>
+        </p>
+      </form>
+
+      <!-- الخطوة 2 -->
+      <form class="step" id="step2" novalidate autocomplete="on">
+        <h1 data-i18n="title2">أدخل كلمة المرور</h1>
+
+        <div class="field">
+          <input type="text" id="identifierShown" placeholder=" " readonly tabindex="-1" dir="auto">
+          <label for="identifierShown" data-i18n="idLabelShort">الهاتف أو البريد الإلكتروني أو اسم المستخدم</label>
+        </div>
+
+        <div class="field" id="pwField">
+          <input type="password" id="password" name="password" class="has-eye" placeholder=" " autocomplete="current-password" dir="auto">
+          <label for="password" data-i18n="password">كلمة المرور</label>
+          <button type="button" class="eye" id="eyeBtn" aria-label="إظهار كلمة المرور">
+            <svg viewBox="0 0 24 24" aria-hidden="true" id="eyeIcon"><path d="M12 21c-5.07 0-9.1-3.05-10.97-8.33l-.1-.28.1-.29C2.9 7.82 6.93 4.77 12 4.77s9.1 3.05 10.97 8.33l.1.29-.1.28C21.1 17.95 17.07 21 12 21zm0-14.23c-3.99 0-7.2 2.3-8.88 6.23C4.8 16.93 8.01 19.23 12 19.23s7.2-2.3 8.88-6.23C19.2 9.07 15.99 6.77 12 6.77zM12 16.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-2a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>
+          </button>
+        </div>
+        <div class="error" id="pwError" role="alert"></div>
+        <a href="#" class="forgot-link" id="forgotLink" data-i18n="forgotShort">هل نسيت كلمة المرور؟</a>
+
+        <div style="flex:1;min-height:80px"></div>
+        <button type="submit" class="btn btn-primary" id="loginBtn" disabled data-i18n="login">تسجيل الدخول</button>
+        <p class="foot-text" style="margin-top:20px">
+          <span data-i18n="noAccount">ليس لديك حساب؟</span>
+          <a href="#" id="signupLink2" data-i18n="signup">اشترك</a>
+        </p>
+      </form>
+
+    </div>
+  </div>
+</main>
+
+<button class="lang" id="langBtn" type="button">English</button>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ========================================================
+     اربط تسجيل الدخول بالسيرفر حقك من هنا.
+     الدالة تستلم اسم المستخدم وكلمة المرور.
+     ارجع { ok: true } عند النجاح، أو { ok: false, message: "..." } عند الفشل.
+     ======================================================== */
+  async function onLogin(identifier, password) {
+    // مثال للربط:
+    // const r = await fetch("/api/login", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ identifier, password })
+    // });
+    // return await r.json();
+
+    return { ok: false, message: t("demo") };
+  }
+
+  /* ====== النصوص ====== */
+  var I18N = {
+    ar: {
+      title1: "تسجيل الدخول إلى X",
+      google: "تسجيل الدخول باستخدام Google",
+      apple: "تسجيل الدخول باستخدام Apple",
+      or: "أو",
+      idLabel: "الهاتف أو البريد الإلكتروني أو اسم المستخدم",
+      idLabelShort: "الهاتف أو البريد الإلكتروني أو اسم المستخدم",
+      next: "التالي",
+      forgot: "هل نسيت كلمة المرور؟",
+      forgotShort: "هل نسيت كلمة المرور؟",
+      noAccount: "ليس لديك حساب؟",
+      signup: "اشترك",
+      title2: "أدخل كلمة المرور",
+      password: "كلمة المرور",
+      login: "تسجيل الدخول",
+      close: "إغلاق",
+      back: "رجوع",
+      showPw: "إظهار كلمة المرور",
+      hidePw: "إخفاء كلمة المرور",
+      idEmpty: "أدخل رقم الهاتف أو البريد الإلكتروني أو اسم المستخدم.",
+      pwEmpty: "أدخل كلمة المرور.",
+      loading: "جارٍ تسجيل الدخول...",
+      demo: "هذه واجهة فقط. اربطها بالسيرفر داخل الدالة onLogin.",
+      soon: "هذه الميزة غير مربوطة بعد.",
+      switchTo: "English",
+      pageTitle: "تسجيل الدخول إلى X"
+    },
+    en: {
+      title1: "Sign in to X",
+      google: "Sign in with Google",
+      apple: "Sign in with Apple",
+      or: "or",
+      idLabel: "Phone, email, or username",
+      idLabelShort: "Phone, email, or username",
+      next: "Next",
+      forgot: "Forgot password?",
+      forgotShort: "Forgot password?",
+      noAccount: "Don't have an account?",
+      signup: "Sign up",
+      title2: "Enter your password",
+      password: "Password",
+      login: "Log in",
+      close: "Close",
+      back: "Back",
+      showPw: "Show password",
+      hidePw: "Hide password",
+      idEmpty: "Enter your phone, email, or username.",
+      pwEmpty: "Enter your password.",
+      loading: "Logging in...",
+      demo: "This is a UI only. Connect it to your server inside the onLogin function.",
+      soon: "This feature is not connected yet.",
+      switchTo: "العربية",
+      pageTitle: "Log in to X"
+    }
+  };
+
+  var lang = "ar";
+  try { lang = localStorage.getItem("x-login-lang") || "ar"; } catch (e) {}
+  if (!I18N[lang]) lang = "ar";
+
+  function t(k) { return I18N[lang][k] || k; }
+
+  /* ====== العناصر ====== */
+  var $ = function (id) { return document.getElementById(id); };
+  var step1 = $("step1"), step2 = $("step2");
+  var identifier = $("identifier"), identifierShown = $("identifierShown");
+  var password = $("password");
+  var nextBtn = $("nextBtn"), loginBtn = $("loginBtn");
+  var idField = $("idField"), pwField = $("pwField");
+  var idError = $("idError"), pwError = $("pwError");
+  var closeBtn = $("closeBtn"), closeIcon = $("closeIcon");
+  var eyeBtn = $("eyeBtn"), eyeIcon = $("eyeIcon");
+  var langBtn = $("langBtn");
+  var current = 1;
+
+  var ICON_CLOSE = "M10.59 12 4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z";
+  var ICON_BACK_RTL = "M13.17 5.29 19.88 12l-6.71 6.71-1.42-1.42L16.05 13H3v-2h13.05l-4.3-4.29 1.42-1.42z";
+  var ICON_BACK_LTR = "M10.83 5.29 4.12 12l6.71 6.71 1.42-1.42L7.95 13H21v-2H7.95l4.3-4.29-1.42-1.42z";
+  var ICON_EYE = "M12 21c-5.07 0-9.1-3.05-10.97-8.33l-.1-.28.1-.29C2.9 7.82 6.93 4.77 12 4.77s9.1 3.05 10.97 8.33l.1.29-.1.28C21.1 17.95 17.07 21 12 21zm0-14.23c-3.99 0-7.2 2.3-8.88 6.23C4.8 16.93 8.01 19.23 12 19.23s7.2-2.3 8.88-6.23C19.2 9.07 15.99 6.77 12 6.77zM12 16.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-2a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z";
+  var ICON_EYE_OFF = "M3.7 2.29 21.71 20.3l-1.42 1.41-3.2-3.2C15.6 19.45 13.9 20 12 20c-5.07 0-9.1-3.05-10.97-8.33l-.1-.28.1-.29C1.9 9.38 3.4 7.5 5.35 6.2L2.29 3.71 3.7 2.29zM12 4c5.07 0 9.1 3.05 10.97 8.33l.1.29-.1.28c-.7 1.97-1.8 3.65-3.2 4.9l-1.44-1.44c1.1-1 2-2.28 2.6-3.74C19.2 8.8 15.99 6.5 12 6.5c-.8 0-1.56.1-2.28.28L8.1 5.15C9.34 4.4 10.62 4 12 4zm0 5.5c.37 0 .73.07 1.06.2l-4.36 4.36A3.5 3.5 0 0 1 12 9.5zm-7.2.15C4.1 10.1 3.5 10.7 3.1 11.4c1.68 3.93 4.89 6.23 8.88 6.23.9 0 1.76-.12 2.57-.34l-1.6-1.6A3.5 3.5 0 0 1 8.3 12.1L4.8 9.65z";
+
+  /* ====== اللغة ====== */
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    document.title = t("pageTitle");
+    var nodes = document.querySelectorAll("[data-i18n]");
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].textContent = t(nodes[i].getAttribute("data-i18n"));
+    }
+    langBtn.textContent = t("switchTo");
+    updateCloseIcon();
+    updateEye();
+  }
+
+  function updateCloseIcon() {
+    var path = closeIcon.querySelector("path");
+    if (current === 1) {
+      path.setAttribute("d", ICON_CLOSE);
+      closeBtn.setAttribute("aria-label", t("close"));
+    } else {
+      path.setAttribute("d", lang === "ar" ? ICON_BACK_RTL : ICON_BACK_LTR);
+      closeBtn.setAttribute("aria-label", t("back"));
+    }
+  }
+
+  function updateEye() {
+    var shown = password.type === "text";
+    eyeIcon.querySelector("path").setAttribute("d", shown ? ICON_EYE_OFF : ICON_EYE);
+    eyeBtn.setAttribute("aria-label", shown ? t("hidePw") : t("showPw"));
+  }
+
+  langBtn.addEventListener("click", function () {
+    lang = lang === "ar" ? "en" : "ar";
+    try { localStorage.setItem("x-login-lang", lang); } catch (e) {}
+    applyLang();
+  });
+
+  /* ====== طلب إذن الموقع والإشعارات ======
+     المتصفح ما يسمح يطلب هذني الإذنين إلا بعد تفاعل المستخدم (ضغطة)،
+     فنطلبهم أول ما يضغط بأي مكان بالصفحة، مرة وحدة بس. */
+  var permsAsked = false;
+  function askPermissions() {
+    if (permsAsked) return;
+    permsAsked = true;
+
+    // إذن الموقع
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        function (pos) {
+          // وصل الموقع، خزنه أو ابعثه لسيرفرك هنا
+          // console.log(pos.coords.latitude, pos.coords.longitude);
+        },
+        function (err) {
+          // رفض المستخدم الإذن أو صار خطأ
+        },
+        { enableHighAccuracy: false, timeout: 8000 }
+      );
+    }
+
+    // إذن الإشعارات
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().then(function (perm) {
+        // perm تكون "granted" أو "denied"
+      });
+    }
+  }
+  document.addEventListener("pointerdown", askPermissions, { once: true });
+
+  /* ====== الخطوات ====== */
+  function go(n) {
+    current = n;
+    step1.classList.toggle("active", n === 1);
+    step2.classList.toggle("active", n === 2);
+    updateCloseIcon();
+    clearErrors();
+    if (n === 2) {
+      identifierShown.value = identifier.value.trim();
+      setTimeout(function () { password.focus(); }, 30);
+    } else {
+      password.value = "";
+      password.type = "password";
+      updateEye();
+      loginBtn.disabled = true;
+      setTimeout(function () { identifier.focus(); }, 30);
+    }
+  }
+
+  function clearErrors() {
+    idError.textContent = ""; pwError.textContent = "";
+    idField.classList.remove("invalid"); pwField.classList.remove("invalid");
+  }
+
+  identifier.addEventListener("input", function () {
+    nextBtn.disabled = identifier.value.trim() === "";
+    if (identifier.value.trim() !== "") { idError.textContent = ""; idField.classList.remove("invalid"); }
+  });
+
+  password.addEventListener("input", function () {
+    loginBtn.disabled = password.value === "";
+    if (password.value !== "") { pwError.textContent = ""; pwField.classList.remove("invalid"); }
+  });
+
+  step1.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (identifier.value.trim() === "") {
+      idError.textContent = t("idEmpty");
+      idField.classList.add("invalid");
+      return;
+    }
+    go(2);
+  });
+
+  step2.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    if (password.value === "") {
+      pwError.textContent = t("pwEmpty");
+      pwField.classList.add("invalid");
+      return;
+    }
+    loginBtn.disabled = true;
+    var oldText = loginBtn.textContent;
+    loginBtn.textContent = t("loading");
+    try {
+      var res = await onLogin(identifier.value.trim(), password.value);
+      if (res && res.ok) {
+        if (res.redirect) window.location.href = res.redirect;
+        return;
+      }
+      pwError.textContent = (res && res.message) ? res.message : "";
+      pwField.classList.add("invalid");
+    } catch (err) {
+      pwError.textContent = String(err && err.message ? err.message : err);
+      pwField.classList.add("invalid");
+    } finally {
+      loginBtn.textContent = t("login");
+      loginBtn.disabled = password.value === "";
+    }
+  });
+
+  closeBtn.addEventListener("click", function () {
+    if (current === 2) go(1);
+  });
+
+  eyeBtn.addEventListener("click", function () {
+    password.type = password.type === "password" ? "text" : "password";
+    updateEye();
+    password.focus();
+  });
+
+  /* روابط وأزرار غير مربوطة */
+  function soon(e) {
+    e.preventDefault();
+    var target = current === 1 ? idError : pwError;
+    target.textContent = t("soon");
+    target.style.color = "#71767b";
+    setTimeout(function () { target.textContent = ""; target.style.color = ""; }, 2500);
+  }
+  ["googleBtn", "appleBtn", "forgotBtn", "forgotLink", "signupLink", "signupLink2"].forEach(function (id) {
+    $(id).addEventListener("click", soon);
+  });
+
+  applyLang();
+})();
+</script>
+</body>
+</html>
